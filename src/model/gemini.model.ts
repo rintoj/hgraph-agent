@@ -7,12 +7,16 @@ import {
   SchemaType,
 } from '@google/generative-ai'
 import { z } from 'zod'
-import appConfig from '../../config.js'
 import type { AgentMessage } from '../agent-message/agent-message.type.js'
 import type { ToolFunction } from '../tool/tools.type.js'
 import type { ContentResult, Model } from './model.type.js'
 
-const genAI = new GoogleGenerativeAI(appConfig.GEMINI_API_KEY)
+const apiKey = process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY
+if (!apiKey) {
+  throw new Error('Google AI API key not found. Please set GOOGLE_AI_API_KEY environment variable.')
+}
+
+const genAI = new GoogleGenerativeAI(apiKey)
 
 export const GEMINI_MODELS = {
   GEMINI: 'gemini',
@@ -115,7 +119,7 @@ export class GeminiModel implements Model {
   private modelName: string
 
   constructor(modelName: string) {
-    this.modelName = modelName ?? appConfig.GEMINI_MODEL
+    this.modelName = modelName ?? GEMINI_MODELS.GEMINI_2_5_FLASH
   }
 
   private createToolSchema(tools: Map<string, ToolFunction<any>>): FunctionDeclaration[] | null {

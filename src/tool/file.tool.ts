@@ -1,4 +1,6 @@
-import z from 'zod'
+import { promises as fs } from 'node:fs'
+import { join } from 'node:path'
+import { z } from 'zod'
 import { createTool } from './builder.tool.js'
 
 export const readFile = createTool({
@@ -10,7 +12,7 @@ export const readFile = createTool({
   }),
   run: async ({ filePath }) => {
     try {
-      const content = await Bun.file(filePath).text()
+      const content = await fs.readFile(filePath, 'utf-8')
       return content
     } catch (error) {
       if (error instanceof Error) {
@@ -32,7 +34,7 @@ export const writeFile = createTool({
   }),
   run: async ({ filePath, content }) => {
     try {
-      await Bun.file(filePath).write(content)
+      await fs.writeFile(filePath, content, 'utf-8')
       return 'Completed writing file successfully.'
     } catch (error) {
       if (error instanceof Error) {
@@ -44,40 +46,39 @@ export const writeFile = createTool({
 })
 
 export const listDirectory = createTool({
-  description:
-    'Lists the contents of a specified folder or matches files using a glob pattern. Returns file and/or directory paths.',
+  description: 'Lists the contents of a specified directory.',
   parameters: z.object({
-    folderPath: z
-      .string()
-      .describe(
-        'Absolute path to the folder to list, or a glob pattern to match files/directories.',
-      ),
-    pattern: z
-      .string()
-      .default('**/*.*')
-      .describe('Glob pattern to match files/directories. Defaults to "**/*.*".'),
-    onlyFiles: z
-      .boolean()
-      .default(true)
-      .describe(
-        'If true, only file paths are returned (directories are excluded). Defaults to true.',
-      ),
+    directoryPath: z.string().describe('Absolute path to the directory to list'),
+    recursive: z.boolean().default(false).describe('List files recursively in subdirectories'),
   }),
-  run: async ({ folderPath, pattern, onlyFiles = true }) => {
+  run: async ({ directoryPath, recursive = false }) => {
     try {
-      const glob = new Bun.Glob(`${folderPath}/${pattern}`)
-      const outputIterator = glob.scan({ onlyFiles, followSymlinks: true })
-      const output = []
-      for await (const item of outputIterator) {
-        output.push(item)
+      const listFiles = async (dir: string, isRecursive: boolean): Promise<string[]> => {
+        const items = await fs.readdir(dir, { withFileTypes: true })
+        const files: string[] = []
+        
+        for (const item of items) {
+          const fullPath = join(dir, item.name)
+          if (item.isFile()) {
+            files.push(fullPath)
+          } else if (item.isDirectory() && isRecursive) {
+            const subFiles = await listFiles(fullPath, true)
+            files.push(...subFiles)
+          } else if (item.isDirectory()) {
+            files.push(`${fullPath}/`)
+          }
+        }
+        return files
       }
-      if (output.length === 0) {
-        return `No files found in directory: ${folderPath}`
+
+      const files = await listFiles(directoryPath, recursive)
+      if (files.length === 0) {
+        return `No files found in directory: ${directoryPath}`
       }
-      return output.join('\n')
+      return files.join('\n')
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(`Error reading folder at ${folderPath}: ${error.message}`)
+        throw new Error(`Error reading directory at ${directoryPath}: ${error.message}`)
       }
       throw error
     }

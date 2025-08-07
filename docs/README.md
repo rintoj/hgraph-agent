@@ -44,7 +44,7 @@ Welcome to the comprehensive documentation for `@hgraph/agent` - a powerful AI a
 
 ### 🛠️ **Extensible Tools**
 - Type-safe tool creation with Zod validation
-- Built-in file system, git, and system tools
+- Built-in file system and system tools
 - Custom tool development
 - Streaming tool execution
 
@@ -72,18 +72,8 @@ Welcome to the comprehensive documentation for `@hgraph/agent` - a powerful AI a
 - `moveFile` - Move/rename files
 - `findFiles` - Search for files
 
-### Git Tools
-- `gitStatus` - Repository status
-- `gitAdd` - Stage files
-- `gitCommit` - Create commits
-- `gitDiff` - Show differences
-- `gitLog` - Commit history
-- `gitBranch` - Branch management
-- `gitPull` - Fetch from remote
-- `gitPush` - Push to remote
-
 ### System Tools
-- `executeCommand` - Run shell commands
+- `executeCommand` - Run shell commands (including git, npm, etc.)
 - `getCurrentDirectory` - Get working directory
 - `getEnvironmentVariable` - Access env vars
 - `checkFileExists` - Check file existence
@@ -93,16 +83,16 @@ Welcome to the comprehensive documentation for `@hgraph/agent` - a powerful AI a
 
 ### Code Assistant
 ```typescript
-import { createAgent, readFile, writeFile, gitStatus } from '@hgraph/agent'
+import { createAgent, readFile, writeFile, executeCommand } from '@hgraph/agent'
 
 const codeAssistant = createAgent({
   name: 'CodeHelper',
   description: 'AI coding assistant',
-  instruction: 'Help with coding tasks, reviews, and git operations',
+  instruction: 'Help with coding tasks, reviews, and system operations',
   model: 'gemini-pro'
 })
 
-codeAssistant.addTools({ readFile, writeFile, gitStatus })
+codeAssistant.addTools({ readFile, writeFile, executeCommand })
 ```
 
 ### File Manager

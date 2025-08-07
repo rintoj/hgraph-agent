@@ -1,5 +1,48 @@
+import { spawn } from 'node:child_process'
+import { promises as fs } from 'node:fs'
 import { z } from 'zod'
 import { createTool } from './builder.tool.js'
+
+async function execCommand(command: string, workingDirectory?: string, timeout: number = 30000): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const args = command.split(' ')
+    const child = spawn(args[0], args.slice(1), { 
+      cwd: workingDirectory, 
+      stdio: 'pipe',
+      shell: true 
+    })
+    
+    let stdout = ''
+    let stderr = ''
+    
+    const timeoutId = setTimeout(() => {
+      child.kill()
+      reject(new Error(`Command timeout after ${timeout}ms`))
+    }, timeout)
+    
+    child.stdout?.on('data', (data) => {
+      stdout += data.toString()
+    })
+    
+    child.stderr?.on('data', (data) => {
+      stderr += data.toString()
+    })
+    
+    child.on('close', (exitCode) => {
+      clearTimeout(timeoutId)
+      if (exitCode !== 0 && stderr) {
+        reject(new Error(`Command failed: ${stderr}`))
+      } else {
+        resolve(stdout || 'Command executed successfully')
+      }
+    })
+    
+    child.on('error', (error) => {
+      clearTimeout(timeoutId)
+      reject(error)
+    })
+  })
+}
 
 export const executeCommand = createTool({
   description: 'Executes a system command and returns the output',
@@ -10,34 +53,8 @@ export const executeCommand = createTool({
   }),
   run: async ({ command, workingDirectory, timeout }) => {
     try {
-      const args = command.split(' ')
-      const proc = Bun.spawn(args, {
-        cwd: workingDirectory,
-        stdout: 'pipe',
-        stderr: 'pipe',
-      })
-      
-      // Create timeout promise
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error(`Command timeout after ${timeout}ms`)), timeout)
-      })
-      
-      // Race between command completion and timeout
-      const result = await Promise.race([
-        Promise.all([
-          new Response(proc.stdout).text(),
-          new Response(proc.stderr).text(),
-        ]),
-        timeoutPromise
-      ]) as [string, string]
-      
-      const [stdout, stderr] = result
-      
-      if (stderr && proc.exitCode !== 0) {
-        throw new Error(`Command failed: ${stderr}`)
-      }
-      
-      return stdout || 'Command executed successfully'
+      const result = await execCommand(command, workingDirectory, timeout)
+      return result
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error executing command: ${error.message}`)
@@ -80,9 +97,8 @@ export const checkFileExists = createTool({
   }),
   run: async ({ path }) => {
     try {
-      const file = Bun.file(path)
-      const exists = await file.exists()
-      return exists ? 'exists' : 'does not exist'
+      await fs.access(path)
+      return 'exists'
     } catch (error) {
       return 'does not exist'
     }
@@ -97,7 +113,7 @@ export const createDirectory = createTool({
   }),
   run: async ({ path, recursive }) => {
     try {
-      await Bun.$`mkdir ${recursive ? '-p' : ''} ${path}`
+      await fs.mkdir(path, { recursive })
       return `Directory created: ${path}`
     } catch (error) {
       if (error instanceof Error) {
@@ -122,16 +138,8 @@ export const deleteFile = createTool({
       if (force) args.push('-f')
       args.push(path)
       
-      const proc = Bun.spawn(args, {
-        stdout: 'pipe',
-        stderr: 'pipe',
-      })
-      
-      const stderr = await new Response(proc.stderr).text()
-      
-      if (stderr) {
-        throw new Error(stderr)
-      }
+      const command = args.join(' ')
+      await execCommand(command)
       
       return `Deleted: ${path}`
     } catch (error) {
@@ -158,16 +166,8 @@ export const copyFile = createTool({
       if (preserveAttributes) args.push('-p')
       args.push(source, destination)
       
-      const proc = Bun.spawn(args, {
-        stdout: 'pipe',
-        stderr: 'pipe',
-      })
-      
-      const stderr = await new Response(proc.stderr).text()
-      
-      if (stderr) {
-        throw new Error(stderr)
-      }
+      const command = args.join(' ')
+      await execCommand(command)
       
       return `Copied ${source} to ${destination}`
     } catch (error) {
@@ -187,16 +187,7 @@ export const moveFile = createTool({
   }),
   run: async ({ source, destination }) => {
     try {
-      const proc = Bun.spawn(['mv', source, destination], {
-        stdout: 'pipe',
-        stderr: 'pipe',
-      })
-      
-      const stderr = await new Response(proc.stderr).text()
-      
-      if (stderr) {
-        throw new Error(stderr)
-      }
+      await execCommand(`mv "${source}" "${destination}"`)
       
       return `Moved ${source} to ${destination}`
     } catch (error) {
@@ -215,19 +206,8 @@ export const getFileInfo = createTool({
   }),
   run: async ({ path }) => {
     try {
-      const proc = Bun.spawn(['ls', '-la', path], {
-        stdout: 'pipe',
-        stderr: 'pipe',
-      })
-      
-      const stdout = await new Response(proc.stdout).text()
-      const stderr = await new Response(proc.stderr).text()
-      
-      if (stderr) {
-        throw new Error(stderr)
-      }
-      
-      return stdout
+      const result = await execCommand(`ls -la "${path}"`)
+      return result
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error getting file info: ${error.message}`)
@@ -252,19 +232,10 @@ export const findFiles = createTool({
       else args.push('-maxdepth', maxDepth.toString())
       args.push('-name', pattern, '-type', 'f')
       
-      const proc = Bun.spawn(args, {
-        stdout: 'pipe',
-        stderr: 'pipe',
-      })
+      const command = args.join(' ')
+      const result = await execCommand(command)
       
-      const stdout = await new Response(proc.stdout).text()
-      const stderr = await new Response(proc.stderr).text()
-      
-      if (stderr) {
-        throw new Error(stderr)
-      }
-      
-      const files = stdout.trim().split('\n').filter(Boolean)
+      const files = result.trim().split('\n').filter(Boolean)
       return files.length > 0 ? files.join('\n') : 'No files found'
     } catch (error) {
       if (error instanceof Error) {

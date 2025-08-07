@@ -73,7 +73,6 @@ agent.addTool('calculate', calculateTool)
 ```typescript
 import { 
   readFile, writeFile, listDirectory,
-  gitStatus, gitCommit, gitPush,
   executeCommand, getCurrentDirectory
 } from '@hgraph/agent'
 
@@ -84,19 +83,14 @@ agent.addTools({
   writeFile,
   listDirectory,
   
-  // Git tools
-  gitStatus,
-  gitCommit,
-  gitPush,
-  
-  // System tools
+  // System tools (includes git operations)
   executeCommand,
   getCurrentDirectory
 })
 
-// Now the agent can perform various operations
+// Now the agent can perform various operations including git
 const messages = [
-  createUserMessage('Please check the git status and read the README file', 'thread-1')
+  createUserMessage('Please run "git status" and read the README file', 'thread-1')
 ]
 
 const responses = await agent.run(messages)
@@ -171,28 +165,13 @@ import { readFile, writeFile, listDirectory } from '@hgraph/agent'
 - **writeFile**: Writes content to a file
 - **listDirectory**: Lists directory contents
 
-### Git Tools
-
-```typescript
-import { gitStatus, gitAdd, gitCommit, gitDiff, gitLog, gitBranch, gitPull, gitPush } from '@hgraph/agent'
-```
-
-- **gitStatus**: Shows working tree status
-- **gitAdd**: Adds files to staging area
-- **gitCommit**: Creates commits with messages
-- **gitDiff**: Shows file differences
-- **gitLog**: Displays commit history
-- **gitBranch**: Lists, creates, or deletes branches
-- **gitPull**: Fetches and merges from remote
-- **gitPush**: Pushes commits to remote
-
 ### System Tools
 
 ```typescript
 import { executeCommand, getCurrentDirectory, getEnvironmentVariable, createDirectory, deleteFile, copyFile, moveFile, findFiles } from '@hgraph/agent'
 ```
 
-- **executeCommand**: Executes system commands
+- **executeCommand**: Executes system commands (including git, npm, etc.)
 - **getCurrentDirectory**: Gets current working directory
 - **getEnvironmentVariable**: Retrieves environment variables
 - **createDirectory**: Creates directories
@@ -200,6 +179,16 @@ import { executeCommand, getCurrentDirectory, getEnvironmentVariable, createDire
 - **copyFile**: Copies files or directories
 - **moveFile**: Moves or renames files
 - **findFiles**: Finds files matching patterns
+
+#### Git Operations via executeCommand
+```typescript
+// Git operations can be performed using executeCommand
+const messages = [
+  createUserMessage('Run "git status" to check repository status', 'thread-1'),
+  createUserMessage('Execute "git add ." and "git commit -m "Update files""', 'thread-1'),
+  createUserMessage('Run "git push origin main" to push changes', 'thread-1')
+]
+```
 
 ## Message Types
 
