@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [main]
+    branches: [main, fix-release-script]
   workflow_dispatch:
 
 permissions:
@@ -84,21 +84,57 @@ jobs:
 
       - name: Commit version bump
         run: |
-          git add package.json bun.lockb
+          git add package.json bun.lock
           git commit -m "chore: release v${{ steps.bump.outputs.version }}"
           git tag -a "v${{ steps.bump.outputs.version }}" -m "Release v${{ steps.bump.outputs.version }}"
 
       - name: Push changes
         run: |
-          git push origin main
+          git push origin ${{ github.ref_name }}
           git push origin "v${{ steps.bump.outputs.version }}"
 
+      - name: Authenticate with npm
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          npm whoami || echo "Authentication check failed"
+
       - name: Publish to npm
-        run: npm publish --access public
+        id: npm_publish
+        run: |
+          # Check if package exists
+          if npm view @hgraph/agent version 2>/dev/null; then
+            echo "Package exists, publishing update..."
+            npm publish --access public
+          else
+            echo "First time publishing scoped package @hgraph/agent"
+            # For first-time publishing of scoped packages
+            npm publish --access public --scope=@hgraph
+          fi
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        continue-on-error: true
+
+      - name: Rollback on publish failure
+        if: steps.npm_publish.outcome == 'failure'
+        run: |
+          echo "NPM publish failed, rolling back..."
+          
+          # Delete the tag locally and remotely
+          git tag -d "v${{ steps.bump.outputs.version }}"
+          git push origin --delete "v${{ steps.bump.outputs.version }}" || echo "Tag might not exist on remote"
+          
+          # Reset the version in package.json
+          git reset --hard HEAD~1
+          
+          # Force push to revert the version bump commit
+          git push --force origin ${{ github.ref_name }}
+          
+          echo "Rollback completed. Version bump and tag have been removed."
+          echo "Please check your NPM_TOKEN and ensure you have permission to publish @hgraph packages."
+          exit 1
 
       - name: Generate release notes
+        if: steps.npm_publish.outcome == 'success'
         id: release_notes
         run: |
           # Get commits since last tag for release notes
@@ -122,6 +158,7 @@ jobs:
           echo "Release notes generated"
 
       - name: Create GitHub Release
+        if: steps.npm_publish.outcome == 'success'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.bump.outputs.version }}
