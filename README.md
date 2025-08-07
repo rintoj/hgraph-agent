@@ -192,7 +192,12 @@ import {
   
   // Template Tools
   parseYaml, generateYaml, createPackageJson, renderTemplate, generateGitignore,
-  generateReadme, formatCode, generateDockerfile, generateEnvFile
+  generateReadme, formatCode, generateDockerfile, generateEnvFile,
+  
+  // Todo Tools
+  createTodoList, addTodo, completeTodo, uncompleteTodo, deleteTodo,
+  listTodos, updateTodo, getTodoStats, clearCompletedTodos,
+  saveTodoList, loadTodoList, listAllTodoLists
 } from '@hgraph/agent'
 ```
 
@@ -282,6 +287,18 @@ import {
 - **generateDockerfile**: Create Dockerfiles
 - **generateEnvFile**: Generate .env files
 
+#### ✅ Todo Tools
+- **createTodoList**: Create or clear todo lists
+- **addTodo**: Add tasks with priority and dependencies
+- **completeTodo/uncompleteTodo**: Mark tasks as complete/incomplete
+- **deleteTodo**: Remove tasks from lists
+- **listTodos**: List and filter todos (all/completed/incomplete/blocked)
+- **updateTodo**: Update task properties
+- **getTodoStats**: Get detailed statistics with dependency tracking
+- **clearCompletedTodos**: Remove completed tasks
+- **saveTodoList/loadTodoList**: Persist lists to files
+- **listAllTodoLists**: View all available lists
+
 #### Git Operations via executeCommand
 ```typescript
 // Git operations can be performed using executeCommand
@@ -328,7 +345,7 @@ For detailed documentation on each module, see the [docs](./docs) directory:
 
 - **[Agent Module](./docs/agent.md)** - Comprehensive guide to creating and managing agents
 - **[Tools Module](./docs/tools.md)** - Creating custom tools and framework overview
-- **[📚 Complete Tools Reference](./docs/tools/)** - Detailed documentation for all 80+ built-in tools
+- **[📚 Complete Tools Reference](./docs/tools/)** - Detailed documentation for all 90+ built-in tools
 - **[Models Module](./docs/models.md)** - Model integration and configuration
 - **[Messages Module](./docs/messages.md)** - Message handling, threading, and utilities
 
@@ -344,6 +361,7 @@ For detailed documentation on each module, see the [docs](./docs) directory:
 - **[💾 Persistence Tools](./docs/tools/persistence.md)** - JSON database, caching, data storage
 - **[📊 Monitoring Tools](./docs/tools/monitoring.md)** - System monitoring, processes, resources
 - **[📝 Template Tools](./docs/tools/template.md)** - Code generation, templates, configuration files
+- **[✅ Todo Tools](./docs/tools/todo.md)** - Task management, todo lists, productivity tracking
 
 ## Examples
 
