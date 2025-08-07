@@ -155,52 +155,83 @@ The following Gemini models are supported:
 
 ## Built-in Tools
 
-### File System Tools
-
-```typescript
-import { readFile, writeFile, listDirectory } from '@hgraph/agent'
-```
-
-- **readFile**: Reads file contents
-- **writeFile**: Writes content to a file
-- **listDirectory**: Lists directory contents
-
-### System Tools
-
 ```typescript
 import { 
-  executeCommand, getCurrentDirectory, getEnvironmentVariable, 
-  createDirectory, deleteFile, copyFile, moveFile, findFiles,
-  getCurrentUser, getHomeDirectory, getTempDirectory,
-  listEnvironmentVariables, setEnvironmentVariable,
-  getSystemInfo, getProcessInfo
+  // File System Tools
+  readFile, writeFile, listDirectory,
+  
+  // System Tools
+  executeCommand, getCurrentDirectory, getCurrentUser, 
+  getHomeDirectory, getTempDirectory, getSystemInfo,
+  
+  // Network Tools
+  httpRequest, downloadFile, checkUrlStatus, getPublicIP,
+  
+  // Text Processing Tools
+  parseJson, parseCsv, hashText, base64Encode, base64Decode,
+  textSearch, textReplace, slugify,
+  
+  // Date/Time Tools
+  getCurrentDateTime, formatDateTime, calculateDateDifference,
+  
+  // Utility Tools
+  validateEmail, validateUrl, generatePassword, calculateMath,
+  convertUnits, generateRandomNumber
 } from '@hgraph/agent'
 ```
 
-#### Command & Process Tools
-- **executeCommand**: Executes system commands (including git, npm, etc.)
-- **getProcessInfo**: Gets Node.js process information
+### Built-in Tool Categories
 
-#### Directory & Path Tools  
-- **getCurrentDirectory**: Gets current working directory
-- **getHomeDirectory**: Gets user's home directory
-- **getTempDirectory**: Gets system temp directory
+#### 🗂️ File System Tools
+- **readFile**: Read file contents
+- **writeFile**: Write content to files  
+- **listDirectory**: List directory contents
 
-#### File Operations
-- **createDirectory**: Creates directories
-- **deleteFile**: Deletes files or directories
-- **copyFile**: Copies files or directories
-- **moveFile**: Moves or renames files
-- **findFiles**: Finds files matching patterns
+#### ⚙️ System Tools
+- **executeCommand**: Execute system commands (git, npm, etc.)
+- **getCurrentDirectory**: Get current working directory
+- **getCurrentUser**: Get current user information
+- **getHomeDirectory**: Get user's home directory
+- **getTempDirectory**: Get system temp directory
+- **getSystemInfo**: Get comprehensive system information
+- **getProcessInfo**: Get Node.js process details
+- **getEnvironmentVariable**: Get specific environment variable
+- **listEnvironmentVariables**: List/filter environment variables
+- **setEnvironmentVariable**: Set temporary environment variable
 
-#### System Information
-- **getCurrentUser**: Gets current user information
-- **getSystemInfo**: Gets comprehensive system information
+#### 🌐 Network Tools
+- **httpRequest**: Make HTTP requests (GET, POST, PUT, DELETE, PATCH)
+- **downloadFile**: Download files from URLs
+- **checkUrlStatus**: Check if URLs are accessible
+- **getPublicIP**: Get public IP address
 
-#### Environment Management
-- **getEnvironmentVariable**: Gets specific environment variable
-- **listEnvironmentVariables**: Lists/filters environment variables
-- **setEnvironmentVariable**: Sets environment variable (temporary)
+#### 📝 Text Processing Tools
+- **parseJson**: Parse JSON with optional path extraction
+- **parseCsv**: Parse CSV to JSON format
+- **hashText**: Generate hashes (MD5, SHA256, etc.)
+- **base64Encode/Decode**: Base64 encoding/decoding
+- **urlEncode/Decode**: URL encoding/decoding
+- **textSearch**: Search text with regex patterns
+- **textReplace**: Replace text with regex
+- **slugify**: Convert text to URL-friendly slugs
+- **generateUuid**: Generate UUIDs
+
+#### ⏰ Date/Time Tools
+- **getCurrentDateTime**: Get current date/time in various formats
+- **formatDateTime**: Format dates with custom patterns
+- **parseDateTime**: Parse dates and extract components
+- **calculateDateDifference**: Calculate differences between dates
+- **addToDate**: Add/subtract time from dates
+- **getTimezone**: Get timezone information
+
+#### 🔧 Utility Tools
+- **validateEmail**: Validate email addresses
+- **validateUrl**: Validate URLs
+- **validateJson**: Validate JSON with optional schema
+- **generatePassword**: Generate secure passwords
+- **calculateMath**: Perform mathematical calculations
+- **generateRandomNumber**: Generate random numbers
+- **convertUnits**: Convert between measurement units
 
 #### Git Operations via executeCommand
 ```typescript

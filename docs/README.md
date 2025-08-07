@@ -86,6 +86,40 @@ Welcome to the comprehensive documentation for `@hgraph/agent` - a powerful AI a
 - `checkFileExists` - Check file existence
 - `getFileInfo` - File/directory information
 
+### Network Tools
+- `httpRequest` - Make HTTP requests (GET, POST, PUT, DELETE, PATCH)
+- `downloadFile` - Download files from URLs
+- `checkUrlStatus` - Check URL accessibility
+- `getPublicIP` - Get public IP address
+
+### Text Processing Tools
+- `parseJson` - Parse JSON with path extraction
+- `parseCsv` - Parse CSV to JSON
+- `hashText` - Generate hashes (MD5, SHA256, etc.)
+- `base64Encode/Decode` - Base64 encoding/decoding
+- `urlEncode/Decode` - URL encoding/decoding
+- `textSearch` - Search with regex patterns
+- `textReplace` - Replace text with regex
+- `slugify` - Convert text to URL slugs
+- `generateUuid` - Generate UUIDs
+
+### Date/Time Tools
+- `getCurrentDateTime` - Get current date/time
+- `formatDateTime` - Format dates with patterns
+- `parseDateTime` - Parse dates and extract info
+- `calculateDateDifference` - Calculate date differences
+- `addToDate` - Add/subtract time from dates
+- `getTimezone` - Get timezone information
+
+### Utility Tools
+- `validateEmail` - Validate email addresses
+- `validateUrl` - Validate URLs
+- `validateJson` - Validate JSON with schema
+- `generatePassword` - Generate secure passwords
+- `calculateMath` - Mathematical calculations
+- `generateRandomNumber` - Generate random numbers
+- `convertUnits` - Convert measurement units
+
 ## Common Use Cases
 
 ### Code Assistant
