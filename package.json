@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "lint": "tsc --noEmit --project tsconfig.json && biome check --write --unsafe ./src",
     "test": "jest",
     "prepublishOnly": "npm run build"
