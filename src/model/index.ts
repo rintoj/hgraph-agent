@@ -1,3 +1,3 @@
-export * from './gemini.model.js'
-export * from './model.type.js'
-export * from './model.util.js'
+export * from './gemini.model'
+export * from './model.type'
+export * from './model.util'

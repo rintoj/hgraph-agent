@@ -1,2 +1,2 @@
-export * from './agent.js'
-export * from './agent.type.js'
+export * from './agent'
+export * from './agent.type'

@@ -1,7 +1,7 @@
-export * from './agent/index.js'
-export * from './agent-message/index.js'
+export * from './agent/index'
+export * from './agent-message/index'
 
-import * as tools from './tool/index.js'
-import * as models from './model/index.js'
+import * as tools from './tool/index'
+import * as models from './model/index'
 
 export { tools, models }

@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import { customAlphabet } from 'nanoid'
-import type { AgentMessage, MessageType, ToolCall } from './agent-message.type.js'
+import type { AgentMessage, MessageType, ToolCall } from './agent-message.type'
 
 export const ALPHABETS = {
   ALPHANUMERIC: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
