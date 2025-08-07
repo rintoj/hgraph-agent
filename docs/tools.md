@@ -1,6 +1,19 @@
 # Tools Module
 
-The Tools module provides the framework for creating and managing agent tools, including built-in file system tools.
+The Tools module provides the framework for creating and managing agent tools, including comprehensive built-in tools across multiple categories.
+
+## 📚 Detailed Tool Documentation
+
+For complete documentation on all available tools, see the dedicated guides:
+
+- **[📁 File System Tools](./tools/file-system.md)** - Complete file and directory operations
+- **[⚙️ System Tools](./tools/system.md)** - System access, commands, and environment management  
+- **[🌐 Network Tools](./tools/network.md)** - HTTP requests, downloads, and network utilities
+- **[📝 Text Processing Tools](./tools/text-processing.md)** - Data parsing, encoding, and text manipulation
+- **[⏰ Date/Time Tools](./tools/datetime.md)** - Date/time operations with timezone support
+- **[🔧 Utility Tools](./tools/utility.md)** - Validation, security, math, and general utilities
+
+The following sections cover the core framework for creating custom tools.
 
 ## Core Functions
 

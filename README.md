@@ -176,7 +176,23 @@ import {
   
   // Utility Tools
   validateEmail, validateUrl, generatePassword, calculateMath,
-  convertUnits, generateRandomNumber
+  convertUnits, generateRandomNumber,
+  
+  // Archive Tools
+  compressFile, decompressFile, createArchive, extractArchive, listArchiveContents,
+  
+  // Persistence Tools
+  jsonDbRead, jsonDbWrite, jsonDbDelete, jsonDbQuery,
+  cacheSet, cacheGet, cacheDelete, cacheClear, cacheList,
+  fileCacheSet, fileCacheGet, fileCacheDelete, fileCacheClear,
+  
+  // Monitoring Tools
+  getDiskSpace, getMemoryUsage, getCpuUsage, listProcesses, getProcessDetails,
+  getNetworkStats, getOpenPorts, getSystemLoad, monitorResource,
+  
+  // Template Tools
+  parseYaml, generateYaml, createPackageJson, renderTemplate, generateGitignore,
+  generateReadme, formatCode, generateDockerfile, generateEnvFile
 } from '@hgraph/agent'
 ```
 
@@ -233,6 +249,39 @@ import {
 - **generateRandomNumber**: Generate random numbers
 - **convertUnits**: Convert between measurement units
 
+#### 📦 Archive Tools
+- **compressFile**: Compress files using GZIP
+- **decompressFile**: Decompress GZIP files
+- **createArchive**: Create TAR archives with optional compression
+- **extractArchive**: Extract TAR/TAR.GZ archives
+- **listArchiveContents**: List archive contents without extraction
+
+#### 💾 Persistence Tools
+- **jsonDbRead/Write/Delete/Query**: JSON-based database operations
+- **cacheSet/Get/Delete/Clear/List**: In-memory cache management
+- **fileCacheSet/Get/Delete/Clear**: File-based persistent cache
+
+#### 📊 Monitoring Tools
+- **getDiskSpace**: Check filesystem disk space
+- **getMemoryUsage**: Monitor system and process memory
+- **getCpuUsage**: Track CPU usage statistics
+- **listProcesses**: List and filter running processes
+- **getProcessDetails**: Get detailed process information
+- **getNetworkStats**: Network interface statistics
+- **getOpenPorts**: List open network ports
+- **getSystemLoad**: System load averages
+- **monitorResource**: Monitor resources over time
+
+#### 📝 Template Tools
+- **parseYaml/generateYaml**: YAML parsing and generation
+- **createPackageJson**: Generate package.json files
+- **renderTemplate**: Template string rendering
+- **generateGitignore**: Create .gitignore files
+- **generateReadme**: Generate README.md files
+- **formatCode**: Format code with proper indentation
+- **generateDockerfile**: Create Dockerfiles
+- **generateEnvFile**: Generate .env files
+
 #### Git Operations via executeCommand
 ```typescript
 // Git operations can be performed using executeCommand
@@ -278,9 +327,23 @@ export GOOGLE_AI_API_KEY=your_api_key_here
 For detailed documentation on each module, see the [docs](./docs) directory:
 
 - **[Agent Module](./docs/agent.md)** - Comprehensive guide to creating and managing agents
-- **[Tools Module](./docs/tools.md)** - Creating custom tools and using built-in tools
+- **[Tools Module](./docs/tools.md)** - Creating custom tools and framework overview
+- **[📚 Complete Tools Reference](./docs/tools/)** - Detailed documentation for all 80+ built-in tools
 - **[Models Module](./docs/models.md)** - Model integration and configuration
 - **[Messages Module](./docs/messages.md)** - Message handling, threading, and utilities
+
+### 🛠️ **Tool Categories Documentation**
+
+- **[📁 File System Tools](./docs/tools/file-system.md)** - File operations, reading, writing, directory management
+- **[⚙️ System Tools](./docs/tools/system.md)** - Command execution, environment, process management
+- **[🌐 Network Tools](./docs/tools/network.md)** - HTTP requests, downloads, URL validation
+- **[📝 Text Processing](./docs/tools/text-processing.md)** - JSON/CSV parsing, encoding, text manipulation
+- **[⏰ Date/Time Tools](./docs/tools/datetime.md)** - Date operations, formatting, timezone handling
+- **[🔧 Utility Tools](./docs/tools/utility.md)** - Validation, security, math, unit conversion
+- **[📦 Archive Tools](./docs/tools/archive.md)** - Compression, archives, TAR/GZIP operations
+- **[💾 Persistence Tools](./docs/tools/persistence.md)** - JSON database, caching, data storage
+- **[📊 Monitoring Tools](./docs/tools/monitoring.md)** - System monitoring, processes, resources
+- **[📝 Template Tools](./docs/tools/template.md)** - Code generation, templates, configuration files
 
 ## Examples
 
