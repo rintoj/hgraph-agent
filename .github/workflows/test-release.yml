@@ -1,0 +1,81 @@
+name: Test Release (Dry Run)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  test-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run lint
+        run: bun run lint
+
+      - name: Build
+        run: bun run build
+
+      - name: Test version bump (dry-run)
+        run: |
+          echo "Would bump version: ${{ github.event.inputs.version }}"
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version --dry-run
+          
+      - name: Current version
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "Current version: $CURRENT_VERSION"
+          
+      - name: Simulate version bump
+        run: |
+          # Show what would happen without making changes
+          echo "Simulating version bump..."
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "New version would be: $NEW_VERSION"
+          
+          # Reset changes (don't actually commit)
+          git checkout -- package.json
+          
+      - name: Test npm publish (dry-run)
+        run: |
+          echo "Testing npm publish with --dry-run flag..."
+          npm publish --dry-run --access public
+        continue-on-error: true
+        
+      - name: Check release notes generation
+        run: |
+          # Test release notes generation
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          
+          if [ -z "$LAST_TAG" ]; then
+            COMMITS=$(git log --pretty=format:"- %s" --max-count=10)
+          else
+            COMMITS=$(git log $LAST_TAG..HEAD --pretty=format:"- %s")
+          fi
+          
+          echo "=== Generated Release Notes ==="
+          echo "## What's Changed"
+          echo ""
+          echo "$COMMITS"
+          echo ""
+          echo "=== End Release Notes ==="
