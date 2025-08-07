@@ -9,7 +9,12 @@
     "build": "rm -rf dist && tsc",
     "lint": "tsc --noEmit --project tsconfig.json && biome check --write --unsafe ./src",
     "test": "bun test",
-    "prepublishOnly": "bun run build"
+    "prepublishOnly": "bun run build",
+    "publish": "npm publish --access public",
+    "release": "npm version patch && npm publish --access public",
+    "release:minor": "npm version minor && npm publish --access public",
+    "release:major": "npm version major && npm publish --access public",
+    "release:dry": "npm publish --dry-run --access public"
   },
   "exports": {
     ".": {
