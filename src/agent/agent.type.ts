@@ -13,4 +13,5 @@ export interface AgentConfig {
   description: string
   instruction: string
   model: ModelName
+  apiKey?: string
 }

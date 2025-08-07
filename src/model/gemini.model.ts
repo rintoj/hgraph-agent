@@ -11,12 +11,13 @@ import type { AgentMessage } from '../agent-message/agent-message.type.js'
 import type { ToolFunction } from '../tool/tools.type.js'
 import type { ContentResult, Model } from './model.type.js'
 
-const apiKey = process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY
-if (!apiKey) {
-  throw new Error('Google AI API key not found. Please set GOOGLE_AI_API_KEY environment variable.')
+function getApiKey(providedApiKey?: string): string {
+  const apiKey = providedApiKey || process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY || process.env.GEMINI_KEY
+  if (!apiKey) {
+    throw new Error('Google AI API key not found. Please provide an apiKey in AgentConfig or set GOOGLE_AI_API_KEY, GEMINI_API_KEY, or GEMINI_KEY environment variable.')
+  }
+  return apiKey
 }
-
-const genAI = new GoogleGenerativeAI(apiKey)
 
 export const GEMINI_MODELS = {
   GEMINI: 'gemini',
@@ -104,8 +105,9 @@ function convertZodFieldToGoogleSchema(schema: z.ZodSchema): any {
 }
 
 export class GeminiModel implements Model {
-  static async embedContent(text: string): Promise<number[]> {
+  static async embedContent(text: string, apiKey?: string): Promise<number[]> {
     try {
+      const genAI = new GoogleGenerativeAI(getApiKey(apiKey))
       const model = genAI.getGenerativeModel({ model: GEMINI_MODELS.GEMINI_EMBEDDING_001 })
       const result = await model.embedContent(text)
       return result.embedding.values
@@ -117,9 +119,11 @@ export class GeminiModel implements Model {
 
   private generativeModel: GenerativeModel | undefined
   private modelName: string
+  private genAI: GoogleGenerativeAI
 
-  constructor(modelName: string) {
+  constructor(modelName: string, apiKey?: string) {
     this.modelName = modelName ?? GEMINI_MODELS.GEMINI_2_5_FLASH
+    this.genAI = new GoogleGenerativeAI(getApiKey(apiKey))
   }
 
   private createToolSchema(tools: Map<string, ToolFunction<any>>): FunctionDeclaration[] | null {
@@ -158,7 +162,7 @@ export class GeminiModel implements Model {
 
   get model(): GenerativeModel {
     if (!this.generativeModel) {
-      this.generativeModel = genAI.getGenerativeModel({ model: this.modelName })
+      this.generativeModel = this.genAI.getGenerativeModel({ model: this.modelName })
     }
     return this.generativeModel
   }

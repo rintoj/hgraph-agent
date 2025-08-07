@@ -114,11 +114,21 @@ Factory function to create a new Agent instance.
 
 **Example:**
 ```typescript
+// Using environment variables for API key
 const agent = createAgent({
   name: 'Assistant',
   description: 'Helpful AI assistant',
   instruction: 'You are a helpful assistant.',
   model: 'gemini'
+})
+
+// Using custom API key
+const agentWithApiKey = createAgent({
+  name: 'Assistant',
+  description: 'Helpful AI assistant',
+  instruction: 'You are a helpful assistant.',
+  model: 'gemini',
+  apiKey: 'your-gemini-api-key'
 })
 ```
 
@@ -134,6 +144,7 @@ interface AgentConfig {
   description: string   // Agent description
   instruction: string   // System instruction/prompt
   model: ModelName     // AI model to use
+  apiKey?: string      // Optional API key for the model (overrides environment variables)
 }
 ```
 
@@ -165,6 +176,38 @@ The Agent class provides comprehensive error handling:
 - Invalid tool arguments are validated using Zod schemas
 - Model errors are propagated with context
 - Maximum turn limits prevent infinite loops
+
+## API Key Configuration
+
+Agents support flexible API key configuration with the following priority order:
+
+1. **AgentConfig.apiKey** - API key provided directly in the agent configuration
+2. **GOOGLE_AI_API_KEY** - Google AI Studio API key environment variable
+3. **GEMINI_API_KEY** - Gemini API key environment variable
+4. **GEMINI_KEY** - Alternative Gemini API key environment variable
+
+**Environment Variables:**
+```bash
+# Option 1: Google AI Studio format
+export GOOGLE_AI_API_KEY=your-api-key-here
+
+# Option 2: Gemini format
+export GEMINI_API_KEY=your-api-key-here
+
+# Option 3: Alternative format
+export GEMINI_KEY=your-api-key-here
+```
+
+**Programmatic Configuration:**
+```typescript
+const agent = createAgent({
+  name: 'Assistant',
+  description: 'Helpful AI assistant',
+  instruction: 'You are a helpful assistant.',
+  model: 'gemini-2.5-flash',
+  apiKey: 'your-api-key-here' // Overrides all environment variables
+})
+```
 
 ## Threading
 

@@ -14,7 +14,7 @@ export class Agent {
 
   constructor(config: AgentConfig) {
     this.config = config
-    this.modelInstance = model(config.model)
+    this.modelInstance = model(config.model, config.apiKey)
   }
 
   get description(): string {
