@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process'
 import { promises as fs } from 'node:fs'
+import { homedir, tmpdir, userInfo } from 'node:os'
 import { z } from 'zod'
 import { createTool } from './builder.tool.js'
 
@@ -240,6 +241,156 @@ export const findFiles = createTool({
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error finding files: ${error.message}`)
+      }
+      throw error
+    }
+  },
+})
+
+export const getCurrentUser = createTool({
+  description: 'Gets information about the current system user',
+  parameters: z.object({}),
+  run: async () => {
+    try {
+      const user = userInfo()
+      return JSON.stringify({
+        username: user.username,
+        uid: user.uid,
+        gid: user.gid,
+        homedir: user.homedir,
+        shell: user.shell || 'unknown'
+      }, null, 2)
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error getting user info: ${error.message}`)
+      }
+      throw error
+    }
+  },
+})
+
+export const getHomeDirectory = createTool({
+  description: 'Gets the current user\'s home directory path',
+  parameters: z.object({}),
+  run: async () => {
+    return homedir()
+  },
+})
+
+export const getTempDirectory = createTool({
+  description: 'Gets the system temporary directory path',
+  parameters: z.object({}),
+  run: async () => {
+    return tmpdir()
+  },
+})
+
+export const listEnvironmentVariables = createTool({
+  description: 'Lists all environment variables or filters by pattern',
+  parameters: z.object({
+    pattern: z.string().optional().describe('Optional pattern to filter environment variable names'),
+    showValues: z.boolean().default(false).describe('Whether to show values (false shows only names)'),
+  }),
+  run: async ({ pattern, showValues }) => {
+    try {
+      const env = process.env
+      const entries = Object.entries(env)
+      
+      let filteredEntries = entries
+      if (pattern) {
+        const regex = new RegExp(pattern, 'i')
+        filteredEntries = entries.filter(([key]) => regex.test(key))
+      }
+      
+      if (filteredEntries.length === 0) {
+        return pattern ? `No environment variables found matching pattern: ${pattern}` : 'No environment variables found'
+      }
+      
+      if (showValues) {
+        return filteredEntries
+          .map(([key, value]) => `${key}=${value}`)
+          .join('\n')
+      } else {
+        return filteredEntries
+          .map(([key]) => key)
+          .join('\n')
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error listing environment variables: ${error.message}`)
+      }
+      throw error
+    }
+  },
+})
+
+export const setEnvironmentVariable = createTool({
+  description: 'Sets an environment variable for the current process (temporary)',
+  parameters: z.object({
+    name: z.string().describe('Name of the environment variable'),
+    value: z.string().describe('Value to set'),
+  }),
+  run: async ({ name, value }) => {
+    try {
+      process.env[name] = value
+      return `Environment variable ${name} set successfully`
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error setting environment variable: ${error.message}`)
+      }
+      throw error
+    }
+  },
+})
+
+export const getSystemInfo = createTool({
+  description: 'Gets general system information',
+  parameters: z.object({}),
+  run: async () => {
+    try {
+      const os = await import('node:os')
+      const info = {
+        platform: os.platform(),
+        architecture: os.arch(),
+        release: os.release(),
+        hostname: os.hostname(),
+        uptime: os.uptime(),
+        totalMemory: os.totalmem(),
+        freeMemory: os.freemem(),
+        cpuCount: os.cpus().length,
+        homeDirectory: homedir(),
+        tempDirectory: tmpdir(),
+        currentUser: userInfo().username
+      }
+      return JSON.stringify(info, null, 2)
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error getting system info: ${error.message}`)
+      }
+      throw error
+    }
+  },
+})
+
+export const getProcessInfo = createTool({
+  description: 'Gets information about the current Node.js process',
+  parameters: z.object({}),
+  run: async () => {
+    try {
+      const info = {
+        pid: process.pid,
+        version: process.version,
+        platform: process.platform,
+        arch: process.arch,
+        memoryUsage: process.memoryUsage(),
+        uptime: process.uptime(),
+        cwd: process.cwd(),
+        execPath: process.execPath
+      }
+      return JSON.stringify(info, null, 2)
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error getting process info: ${error.message}`)
       }
       throw error
     }

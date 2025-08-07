@@ -75,7 +75,14 @@ Welcome to the comprehensive documentation for `@hgraph/agent` - a powerful AI a
 ### System Tools
 - `executeCommand` - Run shell commands (including git, npm, etc.)
 - `getCurrentDirectory` - Get working directory
-- `getEnvironmentVariable` - Access env vars
+- `getHomeDirectory` - Get user's home directory
+- `getTempDirectory` - Get system temp directory
+- `getCurrentUser` - Get current user information
+- `getSystemInfo` - Get comprehensive system info
+- `getProcessInfo` - Get Node.js process details
+- `getEnvironmentVariable` - Get specific env var
+- `listEnvironmentVariables` - List/filter env vars
+- `setEnvironmentVariable` - Set temporary env var
 - `checkFileExists` - Check file existence
 - `getFileInfo` - File/directory information
 

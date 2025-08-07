@@ -168,17 +168,39 @@ import { readFile, writeFile, listDirectory } from '@hgraph/agent'
 ### System Tools
 
 ```typescript
-import { executeCommand, getCurrentDirectory, getEnvironmentVariable, createDirectory, deleteFile, copyFile, moveFile, findFiles } from '@hgraph/agent'
+import { 
+  executeCommand, getCurrentDirectory, getEnvironmentVariable, 
+  createDirectory, deleteFile, copyFile, moveFile, findFiles,
+  getCurrentUser, getHomeDirectory, getTempDirectory,
+  listEnvironmentVariables, setEnvironmentVariable,
+  getSystemInfo, getProcessInfo
+} from '@hgraph/agent'
 ```
 
+#### Command & Process Tools
 - **executeCommand**: Executes system commands (including git, npm, etc.)
+- **getProcessInfo**: Gets Node.js process information
+
+#### Directory & Path Tools  
 - **getCurrentDirectory**: Gets current working directory
-- **getEnvironmentVariable**: Retrieves environment variables
+- **getHomeDirectory**: Gets user's home directory
+- **getTempDirectory**: Gets system temp directory
+
+#### File Operations
 - **createDirectory**: Creates directories
 - **deleteFile**: Deletes files or directories
 - **copyFile**: Copies files or directories
 - **moveFile**: Moves or renames files
 - **findFiles**: Finds files matching patterns
+
+#### System Information
+- **getCurrentUser**: Gets current user information
+- **getSystemInfo**: Gets comprehensive system information
+
+#### Environment Management
+- **getEnvironmentVariable**: Gets specific environment variable
+- **listEnvironmentVariables**: Lists/filters environment variables
+- **setEnvironmentVariable**: Sets environment variable (temporary)
 
 #### Git Operations via executeCommand
 ```typescript
