@@ -46,5 +46,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/hgraph-io/agent"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
