@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [main]
+    branches: [main, fix-release-script]
   workflow_dispatch:
 
 permissions:
@@ -84,13 +84,13 @@ jobs:
 
       - name: Commit version bump
         run: |
-          git add package.json bun.lockb
+          git add package.json bun.lock
           git commit -m "chore: release v${{ steps.bump.outputs.version }}"
           git tag -a "v${{ steps.bump.outputs.version }}" -m "Release v${{ steps.bump.outputs.version }}"
 
       - name: Push changes
         run: |
-          git push origin main
+          git push origin ${{ github.ref_name }}
           git push origin "v${{ steps.bump.outputs.version }}"
 
       - name: Publish to npm
