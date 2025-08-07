@@ -1,0 +1,49 @@
+{
+  "name": "@hgraph/agent",
+  "version": "1.0.0",
+  "description": "AI agent framework with tool support",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tsc --noEmit --project tsconfig.json && biome check --write --unsafe ./src",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "package.json"
+  ],
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "nanoid": "^5.1.5",
+    "zod": "^4.0.10"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "biome": "^0.3.3",
+    "jest": "^30.0.5",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "tools",
+    "gemini",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hgraph-io/agent"
+  }
+}
