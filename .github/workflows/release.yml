@@ -93,8 +93,22 @@ jobs:
           git push origin ${{ github.ref_name }}
           git push origin "v${{ steps.bump.outputs.version }}"
 
+      - name: Authenticate with npm
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          npm whoami || echo "Authentication check failed"
+
       - name: Publish to npm
-        run: npm publish --access public --registry https://registry.npmjs.org/
+        run: |
+          # Check if package exists
+          if npm view @hgraph/agent version 2>/dev/null; then
+            echo "Package exists, publishing update..."
+            npm publish --access public
+          else
+            echo "First time publishing scoped package @hgraph/agent"
+            # For first-time publishing of scoped packages
+            npm publish --access public --scope=@hgraph
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
