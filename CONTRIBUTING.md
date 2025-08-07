@@ -57,10 +57,11 @@ git commit -m "docs: improve README examples"
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Ensure lint passes: `npm run lint`
-5. Ensure build passes: `npm run build`
-6. Commit with conventional commit message
-7. Push and create a pull request
+4. Ensure lint passes: `bun run lint`
+5. Ensure build passes: `bun run build`
+6. Run tests: `bun test`
+7. Commit with conventional commit message
+8. Push and create a pull request
 
 ## Release Process
 
@@ -84,5 +85,25 @@ For manual releases, use the GitHub Actions UI:
 
 ## Setup Requirements
 
+### Prerequisites
+- [Bun](https://bun.sh) runtime installed locally
+- Node.js (for npm publishing compatibility)
+
+### GitHub Secrets
 To enable automatic publishing, set the following secret in your GitHub repository:
 - `NPM_TOKEN`: Your npm authentication token for publishing
+
+### Local Development
+```bash
+# Install dependencies
+bun install
+
+# Run lint
+bun run lint
+
+# Build the project
+bun run build
+
+# Run tests
+bun test
+```
