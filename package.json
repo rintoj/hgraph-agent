@@ -1,6 +1,6 @@
 {
   "name": "@hgraph/agent",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "AI agent framework with tool support",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
